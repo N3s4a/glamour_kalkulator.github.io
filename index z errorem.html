@@ -1,0 +1,206 @@
+<script>
+    let marza_proc = 0.35;
+    console.log(marza_proc);
+    let correct = false;
+</script>
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ceny</title>
+</head>
+<body>
+    <div style="float: left;">  
+        <h1 id="ostrzezenie">Uwaga, blaty powyżej grubości 43mm do wyceny indywidualnej! 
+        <h1 id="ostrzezenie">Uwaga, minimalna grubość blatu 16mm</h1>
+        <h1 id="ostrzezenie">Uwaga, maksymalna długość blatu - 4m! Maksymalna głębokość blatu to 1,2m!</h1>
+        <h1 id="ostrzezenie">Pamiętaj, zamówienie blatu, jest jednoznaczne z wpłaceniem 50% zaliczki !</h1>
+        <select class="drewna" required>
+            <option value="2100">Sosna</option>
+            <option value="3800">Jesion</option>
+            <option value="6800">Dąb</option>
+            <option value="2000">Buk</option>
+            <option value="3800">Dąb czerwony</option>
+        </select>
+        <br>
+
+        <label for="szerokość">Podaj długość w mm</label>
+        <input type="text" class="szerokość" id="szerokość" name="szerokość" required>
+        <br>
+
+        <label for="glebokosc">Podaj głębokość w mm</label>
+        <input type="text" class="glebokosc" id="glebokosc" name="glebokosc" required>
+        <br>
+
+        <label for="grubosc">Podaj grubość w mm</label>
+        <input type="text" class="grubosc" id="grubosc" name="grubosc" required>
+        <br>
+        
+        <p>Roddzaj wykończenia:</p>
+
+        <input type="radio" name="wykonczenie" id="Surowy" required>
+        <label for="Surowy">Surowy</label>
+        <br>
+
+        <input type="radio" name="wykonczenie" id="Lakier">
+        <label for="lakier">Lakierowanie</label>
+        <br>
+
+        <input type="radio" name="wykonczenie" id="Olej">
+        <label for="Olej">Olejowanie</label>
+        <br>
+
+        <input type="radio" name="wykonczenie" id="Olej_wosk">
+        <label for="olej_wosk">Olejowanie + wosk</label>
+        <br>
+
+        <input type="radio" name="wykonczenie" id="Wosk">
+        <label for="wosk">Wosk</label>
+        <br>
+
+        <label for="dziura">Wycięcie otworu</label>
+        <input type="checkbox" name="dziura" id="dziura">
+        <label for="IloscOtworow">Podaj ilość otworów</label>
+        <input type="text" class="IloscOtworow" id="IloscOtworow" name="IloscOtworow" required>
+        <br>
+
+        <button id="policz" onclick="Licz()">Policz cenę</button>
+        <h3 id="blat_surowy"></h3>
+        <h3 id="cena_za_m2"></h3>
+        <h3 id="otwor"></h3>
+        <h3 id="marza"></h3>
+        <div id="zmiana_marzy">
+        <script>
+            
+        </script>
+        </div>
+        <h3 id="wynik_netto"></h3>
+        <h3 id="wynik"></h3>
+    </div>
+    <div style="float: right;">
+        <input type="password" id="haslo" class="haslo" name="haslo" placeholder="Wpisz hasło">
+        <button type="button" onclick="zaloguj()">Zaloguj</button>
+    </div>
+    <div style="float: left;">  
+        <h3 id="ostrzezenie">
+            Kontakt: 
+            Mariusz  - 500-351-417 / 
+            Krystian - 697-917-202 / 
+            mail do zamówień - zamowienia@glamourwood.pl</h3>
+    </div>
+    <script>
+        const button = document.querySelector('#policz');
+
+        function Licz() {
+            let hasError = false;
+
+            let drewno = parseFloat(document.querySelector('.drewna').value);
+            console.log(drewno)
+            let szerokosc = ((parseFloat((document.querySelector('.szerokość').value).replace(",", ".")))*0.001);
+            console.log(szerokosc)
+            let glebokosc = ((parseFloat((document.querySelector('.glebokosc').value).replace(",", ".")))*0.001);
+            console.log(glebokosc)
+            let grubosc = ((parseFloat((document.querySelector('.grubosc').value).replace(",", ".")))*0.001);
+            console.log(grubosc)
+
+            if (grubosc<0.016){
+                alert("Zbyt mała grubość blatu");
+                hasError = true;
+            }
+            if (grubosc>0.043){
+                alert("Za duża grubość, balt do wyceny indywidualnej");
+                hasError = true;
+            }    
+            if (glebokosc>1.2){
+                alert("Za duża głębokość, balt do wyceny indywidualnej");
+                hasError = true;
+            }     
+            if (szerokosc>4.05){
+                alert("Za duża długość, balt do wyceny indywidualnej");
+                hasError = true;
+            }    
+
+            if (grubosc < 0.026){
+                grubosc = 0.032
+            } else if (grubosc < 0.044){
+                grubosc = 0.052
+            }
+
+            let powierzchnia_check = (szerokosc*glebokosc)
+            if (powierzchnia_check>3){
+                alert("Wycena indywidualna");
+                hasError = true;
+            }
+
+            if (hasError) return;
+
+            let wykonczenie = document.querySelector('input[name="wykonczenie"]:checked').id;
+            let dziura = document.querySelector('#dziura').checked;
+            let dziura_cena = 0;
+            
+            let IloscOtworow = parseFloat(document.querySelector('#IloscOtworow').value) || 0;
+            if (dziura){
+                 dziura_cena = (IloscOtworow * 75);
+            }
+        
+            let cena_za_m3_materialu = (szerokosc * grubosc * glebokosc *1.2 * drewno);
+            let cena_za_m2 = (szerokosc * glebokosc);
+
+            if (wykonczenie == "Surowy"){
+                cena_za_m2 *= 0;
+            }else if (wykonczenie == "Lakier"){
+                cena_za_m2 *= 50;
+            }else if (wykonczenie == "Olej"){
+                cena_za_m2 *= 25;
+            }else if (wykonczenie == "Olej_wosk"){
+                cena_za_m2 *= 50;
+            }else{
+                cena_za_m2 *= 25;
+            }
+            cena_za_m2 *= 2.2;
+
+            
+            let powierzchnia = (szerokosc*glebokosc)
+            let robocizna = 0;
+            if (powierzchnia<=1){
+                robocizna = 500;
+            }else if (powierzchnia<=2){
+                robocizna = 1000;
+            }else if (powierzchnia<=3){
+                robocizna = 1500;
+            }
+            
+            let cena_warsztat = (cena_za_m3_materialu + cena_za_m2 + dziura_cena  + robocizna);
+            let blat_surowy = (cena_za_m3_materialu + robocizna);
+            let marza = cena_warsztat * marza_proc;
+            let wynik = ((cena_warsztat + marza) * 1.23).toFixed(2);
+            let wynik_netto = (cena_warsztat + marza).toFixed(2);
+            
+            if (correct){
+                document.getElementById("blat_surowy").innerHTML = "Cena surowego blatu: " + blat_surowy.toFixed(2) + "zł";
+                document.getElementById("cena_za_m2").innerHTML = "Cena wykończenia: " + cena_za_m2.toFixed(2) + "zł";
+                document.getElementById("otwor").innerHTML = "Cena otowru: " + dziura_cena.toFixed(2) + "zł";
+                document.getElementById("marza").innerHTML = "Marża: " + marza.toFixed(2) + "zł";
+            }
+            document.getElementById("wynik_netto").innerHTML ="Cena końcowa netto: " + wynik_netto + "zł";
+            document.getElementById("wynik").innerHTML ="Cena końcowa brutto: " + wynik + "zł";
+            
+        }
+        async function zaloguj(){
+                const haslo = document.getElementById('haslo').value;
+                if (haslo === "MeN3dżeR!!"){
+                    correct = true;
+                    alert("Logowanie udane");
+                } else {
+                    alert("Błędne hasło");
+                }
+
+            }
+            function Zmiana_m(){
+                let nowa_marza = parseFloat(document.getElementById("zmiana_marza").value.replace(",", "."));
+                marza = nowa_marza
+            }
+    </script>
+</body>
+</html>
